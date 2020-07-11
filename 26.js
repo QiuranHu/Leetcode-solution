@@ -6,14 +6,17 @@ var removeDuplicates = function(nums) {
     if(nums.length === 0) {
         return;
     }
-    let current = nums[0];
-    let i = 1
-    while(i < nums.length) {
-        if(nums[i] === current) {
-            nums.splice(i, 1);
-        } else {
-            current = nums[i];
-            i++;
+    let i = 0;
+    let j = i;
+    while(j < nums.length) {
+        while(nums[j] === nums[i]) {
+            j ++;
         }
+        if(j >= nums.length) {
+            break;
+        }
+        i++;
+        nums[i] = nums[j];
     }
+    nums.splice(i + 1);
 };
