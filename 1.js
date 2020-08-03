@@ -3,17 +3,17 @@
  * @param {number} target
  * @return {number[]}
  */
-let twoSum = function(nums, target) {
-    let map = new Map();
-    nums.map((value, index) => {
+var twoSum = function(nums, target) {
+    const map = new Map();
+    nums.forEach((value, index) => {
         map.set(value, index);
-    })
-    for(let i = 0; i < nums.length; i ++) {
-        if(map.has(target - nums[i])) {
-            let indexOfAnotherELement = map.get(target - nums[i]);
-            if( i !== indexOfAnotherELement) {
-                return [i, indexOfAnotherELement];
-            }
+    });
+    for(let index = 0; index < nums.length; index++) {
+        const value = nums[index];
+        const valueToFind = target - value;
+        const lookupResut = map.get(valueToFind);
+        if(lookupResut && lookupResut !== index) {
+            return [index, lookupResut];
         }
     }
 };
