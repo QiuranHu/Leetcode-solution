@@ -3,17 +3,32 @@
  * @return {number}
  */
 let lengthOfLongestSubstring = function(s) {
-    let result = "";
-    for(let index = 0; index < s.length; index ++) {
-        let temp = "";
-        let cur = index;
-        while(cur < s.length && !temp.includes(s[cur])) {
-            temp += s[cur];
-            cur += 1;
-        }
-        if(temp.length > result.length) {
-            result = temp;
-        }
+    // Idea: double pointers.
+    if(s === '') {
+        return 0;
     }
-    return result.length;
+    const set = new Set();
+    let left = 0;
+    let right = 0;
+    set.add(s[0]);
+    let bestLength = 1;
+    let currentLength = 1;
+    while(true) {
+        if(left === s.length) {
+            break;
+        }
+        while(right + 1 <= s.length - 1 && !set.has(s[right + 1])) {
+            set.add(s[right + 1]);
+            currentLength += 1;
+            right += 1;
+            bestLength = Math.max(bestLength, currentLength);
+        }
+
+        if(set.has(s[left])) {
+            set.delete(s[left]);
+        }
+        left += 1;
+        currentLength -= 1;
+    }
+    return bestLength;
 };
