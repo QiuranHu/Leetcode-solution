@@ -4,96 +4,60 @@
  * @return {number}
  */
 var findMedianSortedArrays = function(nums1, nums2) {
-    let isEmptyArrayExist = false;
-    let nonEmptyArray;
-    if(nums1.length === 0 && nums2.length !== 0) {
-        isEmptyArrayExist = true;
-        nonEmptyArray = nums2;
-    } else if(nums1.length !== 0 && nums2.length === 0) {
-        isEmptyArrayExist = true;
-        nonEmptyArray = nums1;
-    }
-    if(isEmptyArrayExist) {
-        const length = nonEmptyArray.length;
-        if(length % 2 === 0) {
-            const index = Math.floor(length / 2) - 1;
-            return (nonEmptyArray[index] + nonEmptyArray[index + 1]) / 2;
-        }
-        else {
-            const index = Math.floor((length + 1) / 2) - 1;
-            return nonEmptyArray[index];
-        }
-    }
-    // x is the index of the break line.
-    // x + 1 is the index of the element after the line
-    // x is the index of the element before the line
-    let start = -1;
-    let end = nums1.length - 1;
+    // We want nums1 to be the shorter array 
+    // and nums2 to be the longer array.
     if(nums1.length > nums2.length) {
-        start = Math.floor((nums1.length - nums2.length + 1) / 2) - 1;
-        end = Math.floor((nums1.length + nums2.length + 1) / 2) - 1;
-    } else {
-        start = -1;
-        end = nums1.length - 1;
+        let temp = nums2;
+        nums2 = nums1;
+        nums1 = temp;
     }
-    // console.log(start);
-    // console.log(end);
+    // If the index is 0, the divider is a line on the left of 0.
+    let start = 0;
+    let end = nums1.length;
+    const combinedLength = nums1.length + nums2.length;
     while(start <= end) {
-        const middle = Math.floor((start + end) / 2);
-        const numberOfElementsOnTheLeft1 = middle + 1;
-        const numberOfElementsOnTheRight1 = nums1.length - numberOfElementsOnTheLeft1;
-        const numberOfElementsOnTheLeft2 = Math.floor((nums1.length + nums2.length + 1) / 2) - numberOfElementsOnTheLeft1;
-        const numberOfElementsOnTheRight2 = nums2.length - numberOfElementsOnTheLeft2;
-        // console.log(numberOfElementsOnTheLeft1)
-        // console.log(numberOfElementsOnTheRight1)
-        // console.log(numberOfElementsOnTheLeft2)
-        // console.log(numberOfElementsOnTheRight2)
-        // console.log()
-        // We need max of the left < min of the right.
-        let maxLeft;
-        let minRight;
-        if(numberOfElementsOnTheLeft1 !== 0) {
-            maxLeft = nums1[numberOfElementsOnTheLeft1 - 1];
-        }
-        if(numberOfElementsOnTheLeft2 !== 0) {
-            if(maxLeft !== undefined) {
-                maxLeft = Math.max(nums2[numberOfElementsOnTheLeft2 - 1], maxLeft);
-            }
-            else {
-                maxLeft = nums2[numberOfElementsOnTheLeft2 - 1];
-            }
+        let divider1 = Math.floor((start + end) / 2); // Number of elements before divider = divider1.
+        let numberLeft1 = divider1;
+        let numberLeft = Math.floor((combinedLength + 1) / 2); // Number of elements on the left side. + 1 because I want in odd cases there is one more element on the left.
+        let numberLeft2 = numberLeft - numberLeft1;
+        let left1;
+        let left2;
+        if(numberLeft1 === 0) {
+            left1 = Number.NEGATIVE_INFINITY;
+        } else {
+            left1 = nums1[numberLeft1 - 1];
         }
         
-        if(numberOfElementsOnTheRight1 !== 0) {
-            minRight = nums1[numberOfElementsOnTheLeft1];
+        if(numberLeft2 === 0) {
+            left2 = Number.NEGATIVE_INFINITY;
+        } else {
+            left2 = nums2[numberLeft2 - 1];
         }
-        if(numberOfElementsOnTheRight2 !== 0) {
-            if(minRight !== undefined) {
-                minRight = Math.min(minRight, nums2[numberOfElementsOnTheLeft2]);
+        
+        let right1;
+        let right2;
+        if(numberLeft1 === nums1.length) {
+            right1 = Number.POSITIVE_INFINITY;
+        } else {
+            right1 = nums1[numberLeft1];
+        }
+        
+        if(numberLeft2 === nums2.length) {
+            right2 = Number.POSITIVE_INFINITY;
+        } else {
+            right2 = nums2[numberLeft2];
+        }
+        
+        if(left1 <= right2 && left2 <= right1) {
+            if(combinedLength % 2 === 0) {
+                return (Math.max(left1, left2) + Math.min(right1, right2)) / 2;
             } else {
-                minRight = nums2[numberOfElementsOnTheLeft2];
+                return Math.max(left1, left2);
             }
-        }
-        if(minRight === undefined) {
-            return maxLeft;
-        }
-        if(maxLeft <= minRight) {
-            if((nums1.length + nums2.length) % 2 === 0) {
-                // console.log(maxLeft)
-                // console.log(minRight)
-                return (maxLeft + minRight) / 2;
-            } else {
-                return maxLeft;
-            }
-        }
-        else {
-            if(numberOfElementsOnTheLeft1 > 0 && numberOfElementsOnTheRight2 > 0
-              && nums1[numberOfElementsOnTheLeft1 - 1] > nums2[numberOfElementsOnTheLeft2]) {
-                end = middle - 1;
-            } else if(numberOfElementsOnTheRight1 > 0 && numberOfElementsOnTheLeft2 > 0 && nums1[numberOfElementsOnTheLeft1] < nums2[numberOfElementsOnTheLeft2 - 1]) {
-                start = middle + 1;
-            }
+        } else if(left1 > right2) {
+            end = divider1 - 1;
+        } else {
+            start = divider1 + 1;
         }
     }
-    
 };
