@@ -38,12 +38,7 @@ var findWords = function (board, words) {
         trie.add(word);
     }
     const answer = [];
-    const dfs = (x, y, trieNode, word, used) => {
-        const location = `${x},${y}`;
-        if (used.has(location)) {
-            return;
-        }
-        used.add(location);
+    const dfs = (x, y, trieNode, word) => {
         if (x < 0 || x >= board.length || y < 0 || y >= board[0].length) {
             return;
         }
@@ -58,15 +53,17 @@ var findWords = function (board, words) {
                 lookUpResult.isPresent = false;
                 answer.push(word);
             }
-            dfs(x - 1, y, lookUpResult, word, new Set(used));
-            dfs(x + 1, y, lookUpResult, word, new Set(used));
-            dfs(x, y + 1, lookUpResult, word, new Set(used));
-            dfs(x, y - 1, lookUpResult, word, new Set(used));
+            board[x][y] = '#';
+            dfs(x - 1, y, lookUpResult, word);
+            dfs(x + 1, y, lookUpResult, word);
+            dfs(x, y + 1, lookUpResult, word);
+            dfs(x, y - 1, lookUpResult, word);
+            board[x][y] = character;
         }
     }
     for (let x = 0; x < board.length; x += 1) {
         for (let y = 0; y < board[0].length; y += 1) {
-            dfs(x, y, trie.root, '', new Set())
+            dfs(x, y, trie.root, '')
         }
     }
     return answer;
